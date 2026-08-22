@@ -7,9 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-/* ─────────────────────────────────────
-   CSS VARIABLES & RESET
-───────────────────────────────────── */
+
 :root {
   --bg:         #f0f8ff;
   --surface:    #e8f5ff;
@@ -47,9 +45,7 @@ input[type=number]::-webkit-inner-spin-button{opacity:.4}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:rgba(0,170,220,.18);border-radius:3px}
 
-/* ─────────────────────────────────────
-   DASHBOARD
-───────────────────────────────────── */
+/* DASHBOARD */
 #view-dashboard{min-height:100vh;padding-bottom:80px}
 
 .dash-header{
@@ -123,7 +119,7 @@ input[type=number]::-webkit-inner-spin-button{opacity:.4}
 .btn-add:hover{opacity:.9}
 .btn-add:active{transform:scale(.97)}
 
-/* ── Overview chart section ── */
+/* Overview chart section */
 .overview-wrap{
   background:var(--card);border:1px solid var(--border);
   border-radius:24px;padding:28px 32px;margin-bottom:38px;
@@ -274,7 +270,7 @@ input[type=number]::-webkit-inner-spin-button{opacity:.4}
   opacity:.4;pointer-events:none;
 }
 
-/* ── Remaining time pill ── */
+/* Remaining time pill */
 .remaining-box{
   display:inline-flex;align-items:center;gap:10px;
   background:linear-gradient(115deg,rgba(0,202,255,.10) 0%,rgba(224,48,174,.08) 100%);
@@ -761,8 +757,12 @@ function saveData(){
 }
 function todayStr(d=new Date()){ return d.toISOString().slice(0,10) }
 function addDays(dateStr,delta){
-  const d=new Date(dateStr+'T00:00:00'); d.setDate(d.getDate()+delta);
-  return todayStr(d);
+  // pure Y-M-D math on UTC noon, so India's (or any) local timezone
+  // offset can never shift the date by a day when we convert back
+  const [y,m,d]=dateStr.split('-').map(Number);
+  const dt=new Date(Date.UTC(y,m-1,d));
+  dt.setUTCDate(dt.getUTCDate()+delta);
+  return dt.toISOString().slice(0,10);
 }
 /* streak = consecutive calendar days a subject has ANY minutes logged.
    We only store streak (a number) + streakDate (last day it grew) on
